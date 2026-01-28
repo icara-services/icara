@@ -1,0 +1,38 @@
+import { Intent, IntentHandler, IntentResult } from "./intent";
+import { Logger } from "../logger";
+import { IntentBus } from "./intentBus";
+
+export class InMemoryIntentBus implements IntentBus {
+  private readonly handlers: Map<string, IntentHandler<any>> = new Map();
+  private logger = new Logger("IntentBus");
+
+  register(handler: IntentHandler<any>) {
+    const intentName = handler.of.name;
+
+    const existing = this.handlers.get(intentName);
+
+    if (existing !== undefined) {
+      throw new Error("Conflict: intent with the same name already registered");
+    }
+
+    this.handlers.set(intentName, handler);
+    this.logger.log(
+      `Intent ${intentName} registered with handler ${handler.constructor.name}`,
+    );
+  }
+
+  async handle<I extends Intent<any>>(intent: I) {
+    const handler = this.handlers.get(intent.constructor.name);
+
+    if (!handler) {
+      throw new Error(`No handler found for intent ${intent.constructor.name}`);
+    }
+
+    this.logger.log(
+      `Handling intent ${intent.constructor.name}`,
+      intent.payload,
+    );
+
+    return (await handler.execute(intent)) as IntentResult<I>;
+  }
+}

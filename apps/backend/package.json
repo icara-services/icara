@@ -1,0 +1,28 @@
+{
+  "name": "@icara/backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "--- TYPECHECK ---": "",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ddd-ts/core": "^0.0.34",
+    "@ddd-ts/event-sourcing-inmemory": "^0.0.34",
+    "@ddd-ts/freeze": "^0.0.34",
+    "@ddd-ts/shape": "^0.0.34",
+    "@ddd-ts/types": "^0.0.34",
+    "@hono/node-server": "^1.19.9",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.3",
+    "hono": "^4.11.5",
+    "kysely": "^0.28.10",
+    "mysql2": "^3.16.1",
+    "stripe": "^20.2.0"
+  }
+}
