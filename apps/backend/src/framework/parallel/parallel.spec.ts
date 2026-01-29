@@ -15,7 +15,7 @@ describe("parallel", () => {
     await expect(
       parallel([1, 2, 3, 4], 2, async (item) => {
         if (item === 3) {
-          throw new Error("failed");
+          throw undefined;
         }
       }),
     ).rejects.toThrow(Error);
@@ -36,7 +36,7 @@ describe("parallel", () => {
       await parallel([1, 2, 3, 4, 5, 6, 7], 3, async (item) => {
         result.push(item * 2);
         await new Promise((resolve) => setTimeout(resolve, 0));
-        throw new Error();
+        throw undefined;
       });
     } catch (e) {}
 

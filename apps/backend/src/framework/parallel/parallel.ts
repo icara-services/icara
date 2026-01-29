@@ -1,3 +1,5 @@
+import { InfrastructureError } from "../error/InfrastructureError";
+
 export async function parallel<T>(
   iterable: AsyncIterable<T> | Iterable<T>,
   concurrency: number,
@@ -12,7 +14,10 @@ export async function parallel<T>(
     while (running.length >= concurrency) {
       await Promise.race(running);
       if (errors.length > 0) {
-        throw new Error("Error during parallel processing", { cause: errors });
+        throw InfrastructureError.because(
+          "Error during parallel processing",
+          errors,
+        );
       }
     }
 
@@ -21,7 +26,9 @@ export async function parallel<T>(
         const error =
           e instanceof Error
             ? e
-            : new Error(`Error during parallel processing: ${String(e)}`);
+            : InfrastructureError.because(
+                `Error during parallel processing: ${String(e)}`,
+              );
 
         errors.push({
           error: error,
@@ -39,7 +46,10 @@ export async function parallel<T>(
 
   await Promise.allSettled(running);
   if (errors.length > 0) {
-    throw new Error("Error during parallel processing", { cause: errors });
+    throw InfrastructureError.because(
+      "Error during parallel processing",
+      errors,
+    );
   }
 
   return index;

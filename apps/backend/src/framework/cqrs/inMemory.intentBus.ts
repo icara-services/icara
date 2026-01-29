@@ -1,6 +1,7 @@
 import { Intent, IntentHandler, IntentResult } from "./intent";
 import { Logger } from "../logger";
 import { IntentBus } from "./intentBus";
+import { InfrastructureError } from "../error/InfrastructureError";
 
 export class InMemoryIntentBus implements IntentBus {
   private readonly handlers: Map<string, IntentHandler<any>> = new Map();
@@ -12,7 +13,9 @@ export class InMemoryIntentBus implements IntentBus {
     const existing = this.handlers.get(intentName);
 
     if (existing !== undefined) {
-      throw new Error("Conflict: intent with the same name already registered");
+      throw InfrastructureError.because(
+        `Handler handling same intent name already registered (${intentName})`,
+      );
     }
 
     this.handlers.set(intentName, handler);
@@ -25,7 +28,9 @@ export class InMemoryIntentBus implements IntentBus {
     const handler = this.handlers.get(intent.constructor.name);
 
     if (!handler) {
-      throw new Error(`No handler found for intent ${intent.constructor.name}`);
+      throw InfrastructureError.because(
+        `No handler found for intent ${intent.constructor.name}`,
+      );
     }
 
     this.logger.log(
